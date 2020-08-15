@@ -5,11 +5,13 @@ const url = "https://www.iban.com/exchange-rates";
 const workDir = __dirname + "/dbWorker.js";
 
 const mainFunc = async () => {
+  console.log("Launching browser...");
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
   await page.goto(url);
   const dataObj = new Object();
 
+  console.log("Crawling data...");
   const dataList = await page.evaluate(() => {
     const nodeList = document.querySelectorAll(
       ".table.table-bordered.table-hover.downloads > tbody > tr"
@@ -36,7 +38,6 @@ const mainFunc = async () => {
 };
 
 mainFunc().then((res) => {
-  console.log(res);
   const worker = new Worker(workDir);
   console.log("Sending crawled data to dbWorker");
   worker.postMessage(res);
@@ -45,20 +46,8 @@ mainFunc().then((res) => {
   });
 });
 
-async function fetchData(url) {
-  console.log("Crawling data...");
-  let response = await axios(url).catch((err) => console.log(err));
-
-  if (response.status !== 200) {
-    console.log("Error occurred while fetching data");
-    return;
-  }
-  return response;
-}
-
-function formatStr(arr, dataObj) {
-  console.log(arr);
+function formatStr(str, dataObj) {
   const regExp = /[^A-Z]*(^\D+)/;
-  const newArr = arr[0].split(regExp);
+  const newArr = str.split(regExp);
   dataObj[newArr[1]] = newArr[2];
 }
