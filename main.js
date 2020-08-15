@@ -1,36 +1,42 @@
-const axios = require("axios");
-const cheerio = require("cheerio");
-const url = "https://www.iban.com/exchange-rates";
+const puppeteer = require("puppeteer");
 const { Worker } = require("worker_threads");
 
+const url = "https://www.iban.com/exchange-rates";
 const workDir = __dirname + "/dbWorker.js";
 
 const mainFunc = async () => {
-  const res = await fetchData(url);
-
-  if (!res.data) {
-    console.log("Invalid data Obj");
-    return;
-  }
-
-  const html = res.data;
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
+  await page.goto(url);
   const dataObj = new Object();
-  const $ = cheerio.load(html);
-  const statsTable = $(
-    ".table.table-bordered.table-hover.downloads > tbody > tr"
-  );
 
-  statsTable.each(function () {
-    const title = $(this).find("td").text();
-    const newStr = title.split("\t");
-    newStr.shift();
-    formatStr(newStr, dataObj);
+  const dataList = await page.evaluate(() => {
+    const nodeList = document.querySelectorAll(
+      ".table.table-bordered.table-hover.downloads > tbody > tr"
+    );
+
+    const arrRows = [...nodeList].map(
+      (row) =>
+        row.textContent
+          .trim()
+          .replace(/(\r\n|\n|\r)/gm, "")
+          .split("\t\t\t")[1]
+    );
+
+    return arrRows;
+  });
+
+  await browser.close();
+
+  dataList.forEach((item) => {
+    formatStr(item, dataObj);
   });
 
   return dataObj;
 };
 
 mainFunc().then((res) => {
+  console.log(res);
   const worker = new Worker(workDir);
   console.log("Sending crawled data to dbWorker");
   worker.postMessage(res);
@@ -51,6 +57,7 @@ async function fetchData(url) {
 }
 
 function formatStr(arr, dataObj) {
+  console.log(arr);
   const regExp = /[^A-Z]*(^\D+)/;
   const newArr = arr[0].split(regExp);
   dataObj[newArr[1]] = newArr[2];
