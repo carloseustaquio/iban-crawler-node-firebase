@@ -1,11 +1,14 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
+const { performance } = require("perf_hooks");
 const url = "https://www.iban.com/exchange-rates";
 const { Worker } = require("worker_threads");
 
 const workDir = __dirname + "/dbWorker.js";
+let t0, t1;
 
 const mainFunc = async () => {
+  t0 = performance.now();
   const res = await fetchData(url);
 
   if (!res.data) {
@@ -36,6 +39,8 @@ mainFunc().then((res) => {
   worker.postMessage(res);
   worker.on("message", (message) => {
     console.log(message);
+    t1 = performance.now();
+    console.log(`Done in ${((t1 - t0) / 1000.0).toFixed(2)} s.`);
   });
 });
 
@@ -51,7 +56,6 @@ async function fetchData(url) {
 }
 
 function formatStr(arr, dataObj) {
-  console.log(arr);
   const regExp = /[^A-Z]*(^\D+)/;
   const newArr = arr[0].split(regExp);
   dataObj[newArr[1]] = newArr[2];
