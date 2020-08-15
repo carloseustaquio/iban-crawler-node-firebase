@@ -12,7 +12,7 @@ Also using Node Workers, executing db related jobs in a separated thread.
 
 Crawling this website page's table: https://www.iban.com/exchange-rates.
 
-## Performance Comparison
+## Performance Comparison 🕑
 
 ![Home Screen](./crawler-node-firebase-comparison.gif)
 
@@ -22,3 +22,8 @@ In other hand, it seems that I would be unable to access the JS code of a SPA, f
 ## Technologies ⌨️
 
 Node.js, Axios, Cheerio, Puppeteer and Firebase
+
+## Branches 🎋
+
+- Master
+- Puppeteer
