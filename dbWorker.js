@@ -4,13 +4,13 @@ const serviceAccount = require("./worker-tutorial-d0f36-firebase-adminsdk-3qq7b-
 
 const firebaseConfig = {
   credential: admin.credential.cert(serviceAccount),
-  apiKey: "AIzaSyD3ktQv69abe0OIAFT9hipjO6-zkusgPj8",
-  authDomain: "worker-tutorial-d0f36.firebaseapp.com",
-  databaseURL: "https://worker-tutorial-d0f36.firebaseio.com",
-  projectId: "worker-tutorial-d0f36",
-  storageBucket: "worker-tutorial-d0f36.appspot.com",
-  messagingSenderId: "41644565086",
-  appId: "1:41644565086:web:4feba16810014e92fecacf",
+  apiKey: process.env.apiKey,
+  authDomain: process.env.authDomain,
+  databaseURL: process.env.databaseURL,
+  projectId: process.env.projectId,
+  storageBucket: process.env.storageBucket,
+  messagingSenderId: process.env.messagingSenderId,
+  appId: process.env.appId,
 };
 
 admin.initializeApp(firebaseConfig);
