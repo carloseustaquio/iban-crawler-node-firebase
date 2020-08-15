@@ -51,6 +51,7 @@ async function fetchData(url) {
 }
 
 function formatStr(arr, dataObj) {
+  console.log(arr);
   const regExp = /[^A-Z]*(^\D+)/;
   const newArr = arr[0].split(regExp);
   dataObj[newArr[1]] = newArr[2];
