@@ -46,8 +46,8 @@ mainFunc().then((res) => {
   console.log("Sending crawled data to dbWorker");
   worker.postMessage(res);
   worker.on("message", (message) => {
-    t1 = performance.now();
     console.log(message);
+    t1 = performance.now();
     console.log(`Done in ${((t1 - t0) / 1000.0).toFixed(2)} s.`);
   });
 });
