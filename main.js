@@ -8,6 +8,7 @@ const workDir = __dirname + "/dbWorker.js";
 let t0, t1;
 
 const mainFunc = async () => {
+  console.log("\n***** HTTP crawler: Axios + Cheerio *****\n");
   t0 = performance.now();
   const res = await fetchData(url);
 
@@ -40,7 +41,7 @@ mainFunc().then((res) => {
   worker.on("message", (message) => {
     console.log(message);
     t1 = performance.now();
-    console.log(`Done in ${((t1 - t0) / 1000.0).toFixed(2)} s.`);
+    console.log(`\nDone in ${((t1 - t0) / 1000.0).toFixed(2)} s.\n`);
   });
 });
 
