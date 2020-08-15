@@ -1,10 +1,14 @@
 const puppeteer = require("puppeteer");
 const { Worker } = require("worker_threads");
+const { performance } = require("perf_hooks");
 
 const url = "https://www.iban.com/exchange-rates";
 const workDir = __dirname + "/dbWorker.js";
 
+let t0, t1;
+
 const mainFunc = async () => {
+  t0 = performance.now();
   console.log("Launching browser...");
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
@@ -42,7 +46,9 @@ mainFunc().then((res) => {
   console.log("Sending crawled data to dbWorker");
   worker.postMessage(res);
   worker.on("message", (message) => {
+    t1 = performance.now();
     console.log(message);
+    console.log(`Done in ${((t1 - t0) / 1000.0).toFixed(2)} s.`);
   });
 });
 
